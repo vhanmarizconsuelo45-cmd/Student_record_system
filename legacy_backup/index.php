@@ -1,11 +1,12 @@
-<?php 
+<?php
 session_start();
 
 if (!isset($_SESSION['user'])) {
     header("Location: login.php");
     exit();
 }
-include __DIR__ . '/config.php'; 
+
+include __DIR__ . '/config.php';
 ?>
 
 <!DOCTYPE html>
@@ -22,13 +23,8 @@ include __DIR__ . '/config.php';
             padding: 20px;
         }
 
-        h2 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
         .container {
-            max-width: 950px;
+            max-width: 1200px;
             margin: auto;
         }
 
@@ -41,20 +37,19 @@ include __DIR__ . '/config.php';
         }
 
         .form-row {
-            display: flex;
-            align-items: center;
+            display: grid;
+            grid-template-columns: repeat(5, minmax(140px, 1fr)) auto;
             gap: 10px;
-            flex-wrap: wrap;
+            align-items: center;
         }
 
-        input {
+        input, select {
             padding: 12px;
             border-radius: 10px;
             border: none;
             outline: none;
             background: #e6f7ff;
-            flex: 1;
-            min-width: 150px;
+            min-width: 0;
         }
 
         button {
@@ -68,11 +63,6 @@ include __DIR__ . '/config.php';
             transition: 0.4s;
             box-shadow: 0 0 15px rgba(0,198,255,0.7);
             white-space: nowrap;
-        }
-
-        button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 25px rgba(0,198,255,1);
         }
 
         table {
@@ -102,6 +92,13 @@ include __DIR__ . '/config.php';
             padding: 8px 12px;
             border-radius: 20px;
             font-size: 13px;
+            display: inline-block;
+            margin: 2px;
+        }
+
+        .view {
+            background: #7af0c8;
+            color: #003366;
         }
 
         .edit {
@@ -114,7 +111,6 @@ include __DIR__ . '/config.php';
             color: white;
         }
 
-        /* HEADER */
         .topbar {
             display: flex;
             justify-content: space-between;
@@ -122,15 +118,6 @@ include __DIR__ . '/config.php';
             margin-bottom: 20px;
         }
 
-        .topbar h2 {
-            margin: 0;
-            text-align: left;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        /* LOGOUT BUTTON */
         .logout {
             background: #ff4d6d;
             color: white;
@@ -138,12 +125,6 @@ include __DIR__ . '/config.php';
             border-radius: 20px;
             text-decoration: none;
             font-weight: bold;
-            box-shadow: 0 0 10px rgba(255,77,109,0.5);
-            transition: 0.3s;
-        }
-
-        .logout:hover {
-            background: #e63950;
         }
     </style>
 </head>
@@ -151,53 +132,59 @@ include __DIR__ . '/config.php';
 <body>
 
 <div class="container">
-
-    <!-- HEADER WITH LOGOUT -->
     <div class="topbar">
-        <h2>🐋 Student Record System</h2>
-
-        <a href="logout.php" class="logout">🚪 Logout</a>
+        <h2>Student Record System</h2>
+        <a href="logout.php" class="logout">Logout</a>
     </div>
 
     <div class="card">
-
-        <!-- FORM -->
         <form method="POST" action="add.php" class="form-row">
-            <input type="text" name="name" placeholder="👤 Name" required>
-            <input type="email" name="email" placeholder="📧 Email" required>
-            <input type="text" name="course" placeholder="📘 Course" required>
-            <button type="submit">🌊 Add</button>
+            <input type="text" name="student_id" placeholder="Student ID" required>
+            <input type="text" name="full_name" placeholder="Full Name" required>
+            <input type="text" name="course" placeholder="Course" required>
+            <select name="year_level" required>
+                <option value="">Year Level</option>
+                <option value="1st Year">1st Year</option>
+                <option value="2nd Year">2nd Year</option>
+                <option value="3rd Year">3rd Year</option>
+                <option value="4th Year">4th Year</option>
+                <option value="5th Year">5th Year</option>
+            </select>
+            <input type="email" name="email_address" placeholder="Email Address" required>
+            <button type="submit">Add</button>
         </form>
 
-        <!-- TABLE -->
         <table>
             <tr>
                 <th>ID</th>
-                <th>Name</th>
-                <th>Email</th>
+                <th>Student ID</th>
+                <th>Full Name</th>
                 <th>Course</th>
+                <th>Year Level</th>
+                <th>Email Address</th>
                 <th>Action</th>
             </tr>
 
             <?php
-            $stmt = $conn->query("SELECT * FROM students");
+            $stmt = $conn->query("SELECT * FROM students ORDER BY id DESC");
 
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             ?>
             <tr>
                 <td><?= $row['id']; ?></td>
-                <td><?= $row['name']; ?></td>
-                <td><?= $row['email']; ?></td>
-                <td><?= $row['course']; ?></td>
+                <td><?= htmlspecialchars($row['student_id']); ?></td>
+                <td><?= htmlspecialchars($row['full_name']); ?></td>
+                <td><?= htmlspecialchars($row['course']); ?></td>
+                <td><?= htmlspecialchars($row['year_level']); ?></td>
+                <td><?= htmlspecialchars($row['email_address']); ?></td>
                 <td>
-                    <a class="edit" href="edit.php?id=<?= $row['id']; ?>">✏ Edit</a>
-                    <a class="delete" href="delete.php?id=<?= $row['id']; ?>" onclick="return confirm('Delete this student?')">🗑 Delete</a>
+                    <a class="view" href="view.php?id=<?= $row['id']; ?>">View</a>
+                    <a class="edit" href="edit.php?id=<?= $row['id']; ?>">Edit</a>
+                    <a class="delete" href="delete.php?id=<?= $row['id']; ?>" onclick="return confirm('Delete this student?')">Delete</a>
                 </td>
             </tr>
             <?php } ?>
-
         </table>
-
     </div>
 </div>
 

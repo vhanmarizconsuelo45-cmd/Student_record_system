@@ -23,7 +23,7 @@ $row = $stmt->fetch(PDO::FETCH_ASSOC);
         }
 
         .container {
-            max-width: 600px;
+            max-width: 700px;
             margin: auto;
             text-align: center;
         }
@@ -40,7 +40,7 @@ $row = $stmt->fetch(PDO::FETCH_ASSOC);
             margin-bottom: 20px;
         }
 
-        input {
+        input, select {
             width: 90%;
             padding: 12px;
             margin: 10px 0;
@@ -50,7 +50,6 @@ $row = $stmt->fetch(PDO::FETCH_ASSOC);
             background: #e6f7ff;
         }
 
-        /* BUTTON STYLE */
         button {
             padding: 12px 20px;
             border: none;
@@ -69,7 +68,6 @@ $row = $stmt->fetch(PDO::FETCH_ASSOC);
             box-shadow: 0 0 25px rgba(0,198,255,1);
         }
 
-        /* BACK BUTTON */
         .back {
             display: inline-block;
             margin-top: 15px;
@@ -84,43 +82,35 @@ $row = $stmt->fetch(PDO::FETCH_ASSOC);
         .back:hover {
             background: rgba(255,255,255,0.2);
         }
-
-        .title {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .title span {
-            font-size: 28px;
-        }
     </style>
 </head>
 
 <body>
 
 <div class="container">
-
-    <div class="title">
-        <span>🐋</span>
-        <h2>Edit Student</h2>
-    </div>
+    <h2>Edit Student</h2>
 
     <div class="card">
         <form method="POST" action="update.php">
             <input type="hidden" name="id" value="<?= $row['id']; ?>">
 
-            <input type="text" name="name" value="<?= $row['name']; ?>" required>
-            <input type="email" name="email" value="<?= $row['email']; ?>" required>
-            <input type="text" name="course" value="<?= $row['course']; ?>" required>
+            <input type="text" name="student_id" value="<?= htmlspecialchars($row['student_id']); ?>" placeholder="Student ID" required>
+            <input type="text" name="full_name" value="<?= htmlspecialchars($row['full_name']); ?>" placeholder="Full Name" required>
+            <input type="text" name="course" value="<?= htmlspecialchars($row['course']); ?>" placeholder="Course" required>
 
-            <button type="submit">🌊 Update Student</button>
+            <select name="year_level" required>
+                <?php foreach (['1st Year', '2nd Year', '3rd Year', '4th Year', '5th Year'] as $level): ?>
+                    <option value="<?= $level; ?>" <?= $row['year_level'] === $level ? 'selected' : ''; ?>><?= $level; ?></option>
+                <?php endforeach; ?>
+            </select>
+
+            <input type="email" name="email_address" value="<?= htmlspecialchars($row['email_address']); ?>" placeholder="Email Address" required>
+
+            <button type="submit">Update Student</button>
         </form>
 
-        <a class="back" href="index.php">⬅ Back</a>
+        <a class="back" href="index.php">Back</a>
     </div>
-
 </div>
 
 </body>
